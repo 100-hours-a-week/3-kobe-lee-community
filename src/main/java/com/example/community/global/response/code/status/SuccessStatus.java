@@ -13,6 +13,10 @@ public enum SuccessStatus implements BaseCode {
     // 일반적인 응답
     _OK(HttpStatus.OK, "COMMON200", "성공입니다."),
 
+    EMAIL_AVAILABLE(HttpStatus.OK, "200_001", "사용 가능한 이메일입니다."),
+    EMAIL_DUPLICATED(HttpStatus.OK, "200_002", "이미 사용 중인 이메일입니다."),
+
+
     ;
 
 
@@ -36,7 +40,6 @@ public enum SuccessStatus implements BaseCode {
                 .code(code)
                 .isSuccess(true)
                 .httpStatus(httpStatus)
-                .build()
-                ;
+                .build();
     }
 }

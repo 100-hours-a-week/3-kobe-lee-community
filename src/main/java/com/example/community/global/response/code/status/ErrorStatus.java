@@ -18,6 +18,8 @@ public enum ErrorStatus implements BaseErrorCode {
     _EMPTY_FIELD(HttpStatus.NO_CONTENT, "COMMON404", "입력 값이 누락되었습니다."),
     _UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "COMMON405", "권한이 없습니다."),
 
+    // 409 CONFLICT
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "409_001", "이미 사용 중인 이메일입니다."),
     ;
 
     private final HttpStatus httpStatus;
