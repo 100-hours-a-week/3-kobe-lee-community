@@ -16,4 +16,9 @@ public class MemberServiceImpl implements MemberService {
     public boolean emailDuplicateCheck(String email) {
         return !memberRepository.existsByEmail(email);
     }
+
+    @Override
+    public boolean nicknameDuplicateCheck(String nickname) {
+        return !memberRepository.existsByNickname(nickname);
+    }
 }
