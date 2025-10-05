@@ -1,13 +1,15 @@
 package com.example.community.member.application.service;
 
 import com.example.community.global.config.AppProperties;
-import com.example.community.global.response.code.status.ErrorStatus;
 import com.example.community.image.domain.Image;
 import com.example.community.image.repository.ImageRepository;
 import com.example.community.member.api.dto.SignUpRequest;
 import com.example.community.member.application.mapper.SignUpMapper;
 import com.example.community.member.domain.Member;
-import com.example.community.member.exception.MemberException;
+import com.example.community.member.exception.DefaultImageNotFoundException;
+import com.example.community.member.exception.DuplicateEmailException;
+import com.example.community.member.exception.DuplicateNicknameException;
+import com.example.community.member.exception.PasswordMismatchException;
 import com.example.community.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,17 +39,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member signUp(SignUpRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
-            throw new MemberException(ErrorStatus.DUPLICATE_EMAIL);
+            throw new DuplicateEmailException();
         }
 
         if (!request.password().equals(request.confirmPassword())) {
-            throw new MemberException(ErrorStatus.PASSWORD_MISMATCH);
+            throw new PasswordMismatchException();
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
         if (memberRepository.existsByNickname(request.nickname())) {
-            throw new MemberException(ErrorStatus.DUPLICATE_NICKNAME);
+            throw new DuplicateNicknameException();
         }
 
         Long imageId;
@@ -58,7 +60,7 @@ public class MemberServiceImpl implements MemberService {
         }
 
         Image profileImage = imageRepository.findById(imageId)
-                .orElseThrow(() -> new MemberException(ErrorStatus.DEFAULT_IMAGE_NOT_FOUND));
+                .orElseThrow(DefaultImageNotFoundException::new);
         Member member = SignUpMapper.toMember(request, profileImage, encodedPassword);
         memberRepository.save(member);
         return member;
