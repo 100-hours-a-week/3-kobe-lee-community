@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(MemberNotFoundException::new);
 
         return new User(
-                member.getEmail(),
+                String.valueOf(member.getId()),
                 member.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
