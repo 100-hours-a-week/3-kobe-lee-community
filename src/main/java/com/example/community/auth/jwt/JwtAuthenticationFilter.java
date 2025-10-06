@@ -35,10 +35,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         AntPathMatcher pathMatcher = new AntPathMatcher();
 
         // 인증이 필요하지 않은 경로에 대해 필터를 건너뛴다.
-        if (pathMatcher.match("/api/auth/login", path) ||
-                pathMatcher.match("/api/auth/logout", path) ||
-                pathMatcher.match("/api/auth/refresh", path) ||
-                pathMatcher.match("/api/auth/signup", path)) {
+        if (pathMatcher.match("/auth", path) ||
+                pathMatcher.match("/member", path) ||
+                pathMatcher.match("/member/email", path) ||
+                pathMatcher.match("/member/nickname", path)) {
 
             chain.doFilter(request, response);
             return;
