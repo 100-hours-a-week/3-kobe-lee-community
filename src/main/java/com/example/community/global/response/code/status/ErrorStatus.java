@@ -21,9 +21,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // 400 BAD REQUEST
     PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "400_002", "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
 
+    // 401 UNAUTHORIZED
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "401_001", "로그인에 실패하였습니다."),
+
     // 404 NOT FOUND
     DEFAULT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "기본 이미지가 존재하지 않습니다."),
-
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자 정보가 존재하지 않습니다."),
     // 409 CONFLICT
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "409_001", "이미 사용 중인 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "409_002", "이미 사용 중인 닉네임입니다."),
