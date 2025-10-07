@@ -9,4 +9,6 @@ public interface MemberService {
     boolean nicknameDuplicateCheck(String nickname);
 
     Member signUp(SignUpRequest signUpRequest);
+
+    Member getMemberInfo(Long memberId);
 }

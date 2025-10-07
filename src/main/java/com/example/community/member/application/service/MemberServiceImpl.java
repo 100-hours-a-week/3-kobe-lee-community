@@ -3,12 +3,14 @@ package com.example.community.member.application.service;
 import com.example.community.global.config.AppProperties;
 import com.example.community.image.domain.Image;
 import com.example.community.image.repository.ImageRepository;
+import com.example.community.member.api.dto.InfoResponse;
 import com.example.community.member.api.dto.SignUpRequest;
 import com.example.community.member.application.mapper.SignUpMapper;
 import com.example.community.member.domain.Member;
 import com.example.community.member.exception.DefaultImageNotFoundException;
 import com.example.community.member.exception.DuplicateEmailException;
 import com.example.community.member.exception.DuplicateNicknameException;
+import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.exception.PasswordMismatchException;
 import com.example.community.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +66,11 @@ public class MemberServiceImpl implements MemberService {
         Member member = SignUpMapper.toMember(request, profileImage, encodedPassword);
         memberRepository.save(member);
         return member;
+    }
+
+    @Override
+    public Member getMemberInfo(Long memberId) {
+
+        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
     }
 }
