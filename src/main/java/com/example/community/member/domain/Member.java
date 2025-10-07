@@ -48,4 +48,12 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "writer")
     private List<Post> postList = new ArrayList<>();    //  추후 확장시 사용자가 작성한 게시글 목록을 조회해야할 소요가 있으니 양방향 연관관계 설정
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfileImage(Image profileImage) {
+        this.profileImage = profileImage;
+    }
 }

@@ -21,6 +21,7 @@ public enum SuccessStatus implements BaseCode {
     LOGIN_SUCCESS(HttpStatus.OK,"200_006", "로그인에 성공했습니다."),
     LOGOUT_SUCCESS(HttpStatus.OK,"200_007", "로그아웃에 성공했습니다."),
     MEMBER_INFO_FOUND(HttpStatus.OK,"200_008", "사용자 정보 조회에 성공했습니다."),
+    MEMBER_INFO_UPDATE(HttpStatus.OK,"200_009", "사용자 정보 수정에 성공했습니다."),
     ;
 
 
