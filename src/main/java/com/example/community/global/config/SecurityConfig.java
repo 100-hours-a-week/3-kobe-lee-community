@@ -5,6 +5,7 @@ import com.example.community.auth.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,9 +27,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)  // 기본 HTTP Basic 인증 비활성화
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth", "/member", "/member/email", "/member/nickname")
-                        .permitAll()  // 인증 없이 허용할 요청
-                        .anyRequest().authenticated()                 // 그 외 요청은 인증 필요
+                        .requestMatchers(HttpMethod.POST, "/auth").permitAll()          // 로그인
+                        .requestMatchers(HttpMethod.POST, "/member").permitAll()        // 회원가입
+                        .requestMatchers(HttpMethod.GET, "/member/email").permitAll()   // 이메일 중복 확인
+                        .requestMatchers(HttpMethod.GET, "/member/nickname").permitAll()// 닉네임 중복 확인
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class)
 

@@ -30,15 +30,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         // 현재 요청의 경로를 얻어온다.
         String path = new UrlPathHelper().getPathWithinApplication(httpRequest);
+        String method = httpRequest.getMethod();
 
         // 경로 매칭을 위한 AntPathMatcher 사용
         AntPathMatcher pathMatcher = new AntPathMatcher();
 
         // 인증이 필요하지 않은 경로에 대해 필터를 건너뛴다.
-        if (pathMatcher.match("/auth", path) ||
-                pathMatcher.match("/member", path) ||
-                pathMatcher.match("/member/email", path) ||
-                pathMatcher.match("/member/nickname", path)) {
+        if ((pathMatcher.match("/auth", path) && "POST".equalsIgnoreCase(method)) ||  // 로그인만 허용
+                (pathMatcher.match("/member", path) && "POST".equalsIgnoreCase(method)) || // 회원가입만 허용
+                (pathMatcher.match("/member/email", path) && "GET".equalsIgnoreCase(method)) ||
+                (pathMatcher.match("/member/nickname", path) && "GET".equalsIgnoreCase(method))) {
 
             chain.doFilter(request, response);
             return;

@@ -135,6 +135,9 @@ public class JwtUtils {
 
     // 토큰 정보 검증
     public JwtTokenValidationResult validateToken(String token) {
+        if (redisDao.getValues("blacklist:" + token) != null) {
+            return new JwtTokenValidationResult(false, "Blacklisted JWT Token");
+        }
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
