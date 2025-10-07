@@ -56,4 +56,8 @@ public class Member extends BaseEntity {
     public void updateProfileImage(Image profileImage) {
         this.profileImage = profileImage;
     }
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

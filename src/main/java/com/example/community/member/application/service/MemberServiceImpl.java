@@ -8,6 +8,7 @@ import com.example.community.image.domain.Image;
 import com.example.community.image.repository.ImageRepository;
 import com.example.community.member.api.dto.SignUpRequest;
 import com.example.community.member.api.dto.UpdateInfoRequest;
+import com.example.community.member.api.dto.UpdatePasswordRequest;
 import com.example.community.member.application.mapper.SignUpMapper;
 import com.example.community.member.domain.Member;
 import com.example.community.member.exception.DefaultImageNotFoundException;
@@ -17,6 +18,7 @@ import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.exception.PasswordMismatchException;
 import com.example.community.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -100,4 +102,17 @@ public class MemberServiceImpl implements MemberService {
 
         return member;
     }
+
+    @Override
+    @Transactional
+    public LocalDateTime updatePassword(HttpServletRequest httpServletRequest,
+                                        UpdatePasswordRequest updatePasswordRequest) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        String memberId = jwtUtils.getUserNameFromToken(accessToken);
+        Member member = memberRepository.findById(Long.parseLong(memberId)).orElseThrow(MemberNotFoundException::new);
+
+        member.updatePassword(passwordEncoder.encode(updatePasswordRequest.password()));
+        return LocalDateTime.now();
+    }
+
 }

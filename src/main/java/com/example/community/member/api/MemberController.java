@@ -11,6 +11,8 @@ import com.example.community.member.api.dto.SignUpRequest;
 import com.example.community.member.api.dto.SignUpResponse;
 import com.example.community.member.api.dto.UpdateInfoRequest;
 import com.example.community.member.api.dto.UpdateInfoResponse;
+import com.example.community.member.api.dto.UpdatePasswordRequest;
+import com.example.community.member.api.dto.UpdatePasswordResponse;
 import com.example.community.member.application.mapper.EmailDuplicateCheckMapper;
 import com.example.community.member.application.mapper.InfoMapper;
 import com.example.community.member.application.mapper.NicknameDuplicateCheckMapper;
@@ -19,11 +21,13 @@ import com.example.community.member.application.service.MemberService;
 import com.example.community.member.domain.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,5 +78,12 @@ public class MemberController {
                                                       @RequestBody @Valid UpdateInfoRequest infoRequest) {
         Member member = memberService.updateInfo(httpServletRequest, infoRequest);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_INFO_UPDATE, InfoMapper.toUpdateInfoResponse(member));
+    }
+
+    @PutMapping("/password")
+    public ApiResponse<UpdatePasswordResponse> updatePassword(HttpServletRequest httpServletRequest,
+                                                              @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
+        LocalDateTime updatedAt = memberService.updatePassword(httpServletRequest, updatePasswordRequest);
+        return ApiResponse.onSuccess(SuccessStatus.PASSWORD_UPDATE, InfoMapper.toUpdatePasswordResponse(updatedAt));
     }
 }
