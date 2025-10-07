@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,9 +45,11 @@ public class MemberController {
 
         boolean available = memberService.emailDuplicateCheck(request.email());
         if (available) {
-            return ApiResponse.onSuccess(SuccessStatus.EMAIL_AVAILABLE, EmailDuplicateCheckMapper.toResponse(available));
+            return ApiResponse.onSuccess(SuccessStatus.EMAIL_AVAILABLE,
+                    EmailDuplicateCheckMapper.toResponse(available));
         } else {
-            return ApiResponse.onSuccess(SuccessStatus.EMAIL_DUPLICATED, EmailDuplicateCheckMapper.toResponse(available));
+            return ApiResponse.onSuccess(SuccessStatus.EMAIL_DUPLICATED,
+                    EmailDuplicateCheckMapper.toResponse(available));
         }
     }
 
@@ -55,9 +58,11 @@ public class MemberController {
                                                                               NicknameDuplicateCheckRequest request) {
         boolean available = memberService.nicknameDuplicateCheck(request.nickname());
         if (available) {
-            return ApiResponse.onSuccess(SuccessStatus.NICKNAME_AVAILABLE, NicknameDuplicateCheckMapper.toResponse(available));
+            return ApiResponse.onSuccess(SuccessStatus.NICKNAME_AVAILABLE,
+                    NicknameDuplicateCheckMapper.toResponse(available));
         } else {
-            return ApiResponse.onSuccess(SuccessStatus.NICKNAME_DUPLICATED, NicknameDuplicateCheckMapper.toResponse(available));
+            return ApiResponse.onSuccess(SuccessStatus.NICKNAME_DUPLICATED,
+                    NicknameDuplicateCheckMapper.toResponse(available));
         }
     }
 
@@ -85,5 +90,11 @@ public class MemberController {
                                                               @RequestBody @Valid UpdatePasswordRequest updatePasswordRequest) {
         LocalDateTime updatedAt = memberService.updatePassword(httpServletRequest, updatePasswordRequest);
         return ApiResponse.onSuccess(SuccessStatus.PASSWORD_UPDATE, InfoMapper.toUpdatePasswordResponse(updatedAt));
+    }
+
+    @DeleteMapping
+    public ApiResponse<LocalDateTime> deleteMember(HttpServletRequest httpServletRequest) {
+        LocalDateTime deletedAt = memberService.deleteMember(httpServletRequest);
+        return ApiResponse.onSuccess(SuccessStatus.DELETE_MEMBER, deletedAt);
     }
 }

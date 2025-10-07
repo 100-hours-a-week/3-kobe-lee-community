@@ -19,4 +19,6 @@ public interface MemberService {
     Member updateInfo(HttpServletRequest httpServletRequest, UpdateInfoRequest updateInfoRequest);
 
     LocalDateTime updatePassword(HttpServletRequest httpServletRequest, UpdatePasswordRequest updatePasswordRequest);
+
+    LocalDateTime deleteMember(HttpServletRequest httpServletRequest);
 }

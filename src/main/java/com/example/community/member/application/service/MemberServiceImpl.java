@@ -115,4 +115,14 @@ public class MemberServiceImpl implements MemberService {
         return LocalDateTime.now();
     }
 
+    @Override
+    @Transactional
+    public LocalDateTime deleteMember(HttpServletRequest httpServletRequest) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        String memberId = jwtUtils.getUserNameFromToken(accessToken);
+        Member member = memberRepository.findById(Long.parseLong(memberId)).orElseThrow(MemberNotFoundException::new);
+
+        return member.deleteMember(LocalDateTime.now());
+    }
+
 }

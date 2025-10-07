@@ -60,4 +60,9 @@ public class Member extends BaseEntity {
     public void updatePassword(String encodedPassword) {
         this.password = encodedPassword;
     }
+
+    public LocalDateTime deleteMember(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+        return deletedAt;
+    }
 }
