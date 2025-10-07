@@ -2,6 +2,7 @@ package com.example.community.auth.jwt;
 
 import com.example.community.auth.jwt.exception.InvalidTokenException;
 import com.example.community.global.redis.RedisDao;
+import com.example.community.global.response.code.status.ErrorStatus;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -125,54 +126,57 @@ public class JwtUtils {
                     .parseClaimsJws(accessToken) // JWT 토큰 검증과 파싱을 모두 수행함
                     .getBody();
         } catch (MalformedJwtException e) {
-            throw new InvalidTokenException("유효하지 않은 토큰 형식입니다.");
+            throw new InvalidTokenException(ErrorStatus.INVALID_TOKEN_FORMAT);
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("토큰이 만료되었습니다.");
+            throw new InvalidTokenException(ErrorStatus.EXPIRED_TOKEN);
         } catch (JwtException e) {
-            throw new InvalidTokenException("토큰이 유효하지 않습니다.");
+            throw new InvalidTokenException(ErrorStatus.INVALID_TOKEN);
         }
     }
 
     // 토큰 정보 검증
-    public JwtTokenValidationResult validateToken(String token) {
+    public void validateToken(String token) {
+        //블랙리스트 토큰 검사
+        if (redisDao.getValues("blacklist:" + token) != null) {
+            throw new InvalidTokenException(ErrorStatus.BLACKLISTED_TOKEN);
+        }
+
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            return new JwtTokenValidationResult(true, "Valid JWT Token"); // 토큰 유효성 검사 성공
+
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
-            return new JwtTokenValidationResult(false, "Invalid JWT Token");
+            throw new InvalidTokenException(ErrorStatus.INVALID_TOKEN_FORMAT);
+
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
-            return new JwtTokenValidationResult(false, "Expired JWT Token");
+            throw new InvalidTokenException(ErrorStatus.EXPIRED_TOKEN);
+
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
-            return new JwtTokenValidationResult(false, "Unsupported JWT Token");
+            throw new InvalidTokenException(ErrorStatus.UNSUPPORTED_TOKEN);
+
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
-            return new JwtTokenValidationResult(false, "JWT claims string is empty.");
+            throw new InvalidTokenException(ErrorStatus.EMPTY_TOKEN);
         }
     }
 
 
     // RefreshToken 검증
-    public boolean validateRefreshToken(String token) {
-        // 기본적인 JWT 검증
-        if (!validateToken(token).isValid()) {
-            return false;
-        }
+    public void validateRefreshToken(String token) {
+        // 1. 기본 JWT 검증 (유효하지 않으면 예외 발생)
+        validateToken(token);
 
-        try {
-            // token에서 username 추출하기
-            String username = getUserNameFromToken(token);
-            // Redis에 저장된 RefreshToken과 비교하기
-            String redisToken = (String) redisDao.getValues(username);
-            return token.equals(redisToken);
-        } catch (Exception e) {
-            log.info("RefreshToken Validation Failed", e);
-            return false;
+        // 2. Redis 저장값과 비교
+        String username = getUserNameFromToken(token);
+        String redisToken = (String) redisDao.getValues(username);
+
+        if (redisToken == null || !redisToken.equals(token)) {
+            throw new InvalidTokenException(ErrorStatus.INVALID_REFRESH_TOKEN);
         }
     }
 

@@ -1,5 +1,8 @@
 package com.example.community.auth.jwt;
 
+import com.example.community.auth.jwt.exception.InvalidTokenException;
+import com.example.community.global.response.code.ErrorReasonDto;
+import com.example.community.global.response.code.status.ErrorStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -30,15 +33,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         // 현재 요청의 경로를 얻어온다.
         String path = new UrlPathHelper().getPathWithinApplication(httpRequest);
+        String method = httpRequest.getMethod();
 
         // 경로 매칭을 위한 AntPathMatcher 사용
         AntPathMatcher pathMatcher = new AntPathMatcher();
 
         // 인증이 필요하지 않은 경로에 대해 필터를 건너뛴다.
-        if (pathMatcher.match("/auth", path) ||
-                pathMatcher.match("/member", path) ||
-                pathMatcher.match("/member/email", path) ||
-                pathMatcher.match("/member/nickname", path)) {
+        if ((pathMatcher.match("/auth", path) && "POST".equalsIgnoreCase(method)) ||  // 로그인만 허용
+                (pathMatcher.match("/member", path) && "POST".equalsIgnoreCase(method)) || // 회원가입만 허용
+                (pathMatcher.match("/member/email", path) && "GET".equalsIgnoreCase(method)) ||
+                (pathMatcher.match("/member/nickname", path) && "GET".equalsIgnoreCase(method))) {
 
             chain.doFilter(request, response);
             return;
@@ -50,24 +54,50 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         log.info("token: {}", token);
 
         if (token == null) {
-            // accessToken이 null인 경우 401 Unauthorized 응답을 반환하고 종료
+            ErrorReasonDto reason = ErrorStatus.EMPTY_TOKEN.getReasonHttpStatus();
+
             log.info("Access token is missing or expired");
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Access token is missing or expired");
-            return;  // 필터 체인 실행 중단
+
+            httpResponse.setStatus(reason.getHttpStatus().value());
+            httpResponse.setContentType("application/json;charset=UTF-8");
+
+            String jsonResponse = String.format(
+                    "{\"isSuccess\": false, \"code\": \"%s\", \"message\": \"%s\"}",
+                    reason.getCode(),
+                    reason.getMessage()
+            );
+
+            httpResponse.getWriter().write(jsonResponse);
+            httpResponse.getWriter().flush();
+
+            return; // 체인 중단
         }
 
-        // JWT 토큰의 유효성을 검증
-        JwtTokenValidationResult validationResult = jwtUtils.validateToken(token);
+        try {
+            jwtUtils.validateToken(token);
 
-        if (validationResult.isValid()) {
-            // 토큰이 유효한 경우, 토큰에서 Authentication 객체를 생성하여 SecurityContextHolder에 설정
             Authentication authentication = jwtUtils.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else {
-            // 토큰이 유효하지 않은 경우 401 Unauthorized 응답을 반환하고 종료
-            log.info("Invalid token: {}", validationResult.getErrorMessage());
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: " + validationResult.getErrorMessage());
-            return;  // 필터 체인 실행 중단
+
+        } catch (InvalidTokenException e) {
+
+            ErrorReasonDto reason = e.getErrorReasonHttpStatus();
+
+            log.info("Token validation failed: {}", reason.getMessage());
+
+            httpResponse.setStatus(reason.getHttpStatus().value());
+            httpResponse.setContentType("application/json;charset=UTF-8");
+
+            String jsonResponse = String.format(
+                    "{\"isSuccess\": false, \"code\": \"%s\", \"message\": \"%s\"}",
+                    reason.getCode(),
+                    reason.getMessage()
+            );
+
+            httpResponse.getWriter().write(jsonResponse);
+            httpResponse.getWriter().flush();
+
+            return; // 체인 중단
         }
 
         // 필터 체인의 다음 단계로 진행

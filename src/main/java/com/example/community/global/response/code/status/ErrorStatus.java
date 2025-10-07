@@ -19,10 +19,17 @@ public enum ErrorStatus implements BaseErrorCode {
     _UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "COMMON405", "권한이 없습니다."),
 
     // 400 BAD REQUEST
-    PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "400_002", "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "400_001", "비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+    INVALID_TOKEN_FORMAT(HttpStatus.BAD_REQUEST, "400_002", "유효하지 않은 토큰 형식입니다."),
 
     // 401 UNAUTHORIZED
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "401_001", "로그인에 실패하였습니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "401_002", "토큰이 만료되었습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "401_003", "토큰이 유효하지 않습니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "401_004", "지원하지 않는 JWT 토큰입니다."),
+    EMPTY_TOKEN(HttpStatus.UNAUTHORIZED, "401_005", "JWT 토큰이 비어 있습니다."),
+    BLACKLISTED_TOKEN(HttpStatus.UNAUTHORIZED, "401_006", "블랙리스트에 등록된 토큰입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "401_007", "유효하지 않은 리프레시 토큰입니다."),
 
     // 404 NOT FOUND
     DEFAULT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "기본 이미지가 존재하지 않습니다."),
