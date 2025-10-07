@@ -34,6 +34,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 404 NOT FOUND
     DEFAULT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "기본 이미지가 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자 정보가 존재하지 않습니다."),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "이미지가 존재하지 않습니다."),
+
+
     // 409 CONFLICT
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "409_001", "이미 사용 중인 이메일입니다."),
     DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "409_002", "이미 사용 중인 닉네임입니다."),
