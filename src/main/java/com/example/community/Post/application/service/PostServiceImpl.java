@@ -1,6 +1,7 @@
 package com.example.community.Post.application.service;
 
 import com.example.community.Post.api.dto.CreatePostRequest;
+import com.example.community.Post.api.dto.UpdatePostRequest;
 import com.example.community.Post.domain.Post;
 import com.example.community.Post.exception.PostNotFoundException;
 import com.example.community.Post.repository.PostRepository;
@@ -77,5 +78,27 @@ public class PostServiceImpl implements PostService {
 
         postRepository.delete(post);
         return LocalDateTime.now();
+    }
+
+    @Override
+    @Transactional
+    public Post updatePost(HttpServletRequest httpServletRequest, UpdatePostRequest updatePostRequest, Long postId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        if (!post.getWriter().getId().equals(member.getId())) {
+            throw new GeneralException(ErrorStatus.NO_PERMISSION);
+        }
+
+        if (updatePostRequest.title() != null) {
+            post.updateTitle(updatePostRequest.title());
+        }
+
+        if (updatePostRequest.content() != null) {
+            post.updateContent(updatePostRequest.content());
+        }
+
+        return post;
     }
 }
