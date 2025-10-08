@@ -8,6 +8,7 @@ import com.example.community.Post.repository.PostRepository;
 import com.example.community.auth.jwt.JwtUtils;
 import com.example.community.global.exception.GeneralException;
 import com.example.community.global.response.code.status.ErrorStatus;
+import com.example.community.Post.api.dto.PostPreview;
 import com.example.community.image.domain.Image;
 import com.example.community.image.repository.ImageRepository;
 import com.example.community.member.domain.Member;
@@ -100,5 +101,10 @@ public class PostServiceImpl implements PostService {
         }
 
         return post;
+    }
+
+    @Override
+    public List<PostPreview> getPostList(String sort, int limit, Object cursor) {
+        return postRepository.findPostsWithCursor(sort, limit, cursor);
     }
 }
