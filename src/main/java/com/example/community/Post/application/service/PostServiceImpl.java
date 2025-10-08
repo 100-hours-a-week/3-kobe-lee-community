@@ -2,6 +2,7 @@ package com.example.community.Post.application.service;
 
 import com.example.community.Post.api.dto.CreatePostRequest;
 import com.example.community.Post.domain.Post;
+import com.example.community.Post.exception.PostNotFoundException;
 import com.example.community.Post.repository.PostRepository;
 import com.example.community.auth.jwt.JwtUtils;
 import com.example.community.global.exception.GeneralException;
@@ -13,6 +14,7 @@ import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.repository.MemberRepository;
 import com.example.community.postImage.domain.PostImage;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,5 +61,21 @@ public class PostServiceImpl implements PostService {
         }
 
         return postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public LocalDateTime deletePost(HttpServletRequest httpServletRequest, Long postId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+
+        if (!post.getWriter().getId().equals(member.getId())) {
+            throw new GeneralException(ErrorStatus.NO_PERMISSION);
+        }
+
+        postRepository.delete(post);
+        return LocalDateTime.now();
     }
 }

@@ -9,7 +9,10 @@ import com.example.community.global.response.ApiResponse;
 import com.example.community.global.response.code.status.SuccessStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,4 +31,9 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.CREATE_POST, CreatePostMapper.toCreatePostResponse(post));
     }
 
+    @DeleteMapping("/{postId}")
+    public ApiResponse<LocalDateTime> deletePost(HttpServletRequest httpServletRequest,
+                                                 @PathVariable Long postId) {
+        return ApiResponse.onSuccess(SuccessStatus.DELETE_POST, postService.deletePost(httpServletRequest, postId));
+    }
 }
