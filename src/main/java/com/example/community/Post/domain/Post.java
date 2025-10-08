@@ -3,6 +3,7 @@ package com.example.community.Post.domain;
 import com.example.community.comment.domain.Comment;
 import com.example.community.global.domain.BaseEntity;
 import com.example.community.member.domain.Member;
+import com.example.community.postImage.domain.PostImage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,11 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
@@ -35,12 +38,15 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @Builder.Default
     @Column(nullable = false)
     private Long likeCount = 0L;
 
+    @Builder.Default
     @Column(nullable = false)
     private Long commentCount = 0L;
 
+    @Builder.Default
     @Column(nullable = false)
     private Long viewCount = 0L;
 
@@ -50,4 +56,12 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "post")
+    private List<PostImage> postImageList = new ArrayList<>();
+
+    public void addPostImage(PostImage postImage) {
+        this.postImageList.add(postImage);
+    }
 }
