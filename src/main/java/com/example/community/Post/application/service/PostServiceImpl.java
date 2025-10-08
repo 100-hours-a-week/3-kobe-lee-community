@@ -13,6 +13,7 @@ import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.repository.MemberRepository;
 import com.example.community.postImage.domain.PostImage;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,14 +40,20 @@ public class PostServiceImpl implements PostService {
                 .writer(member)
                 .build();
 
-        for (Long imageId : createPostRequest.imageIds()) {
+        List<Long> imageIds = createPostRequest.imageIds();
+
+        for (int i = 0; i < imageIds.size(); i++) {
+            Long imageId = imageIds.get(i);
+
             Image image = imageRepository.findById(imageId)
                     .orElseThrow(() -> new GeneralException(ErrorStatus.IMAGE_NOT_FOUND));
 
-            PostImage postImage = PostImage.builder()
-                    .post(post)
-                    .image(image)
-                    .build();
+            PostImage postImage = PostImage.of(
+                    post,
+                    image,
+                    i + 1,
+                    imageId.equals(createPostRequest.thumbnailImageId())
+            );
 
             post.addPostImage(postImage);
         }

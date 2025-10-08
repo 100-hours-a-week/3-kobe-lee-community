@@ -40,4 +40,16 @@ public class PostImage {
 
     @Column(nullable = false)
     private boolean isThumbnail;
+
+    public static PostImage of(Post post, Image image, int order, boolean isThumbnail) {
+        PostImage postImage = new PostImage();
+        postImage.post = post;
+        postImage.image = image;
+        postImage.displayOrder = order;
+        postImage.isThumbnail = isThumbnail;
+
+        postImage.id = new PostImageId(post.getId(), image.getId());
+
+        return postImage;
+    }
 }

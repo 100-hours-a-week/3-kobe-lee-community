@@ -4,6 +4,7 @@ import com.example.community.comment.domain.Comment;
 import com.example.community.global.domain.BaseEntity;
 import com.example.community.member.domain.Member;
 import com.example.community.postImage.domain.PostImage;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -58,7 +59,7 @@ public class Post extends BaseEntity {
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImageList = new ArrayList<>();
 
     public void addPostImage(PostImage postImage) {
