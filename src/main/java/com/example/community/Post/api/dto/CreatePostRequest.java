@@ -15,6 +15,6 @@ public record CreatePostRequest(
         @NotEmpty(message = "최소 한 장 이상의 이미지가 필요합니다.")
         List<Long> imageIds,  // 이미지 업로드 후 DB에 저장된 imageId 리스트
 
-        int thumbnailImageId
+        Long thumbnailImageId
 ) {
 }
