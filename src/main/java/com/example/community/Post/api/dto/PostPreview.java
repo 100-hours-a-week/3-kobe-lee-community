@@ -8,7 +8,7 @@ public record PostPreview(
         Long commentCount,
         Long viewCount,
         Long memberId,
-        Long profileImageId,
+        String profileImageId,
         String nickname,
         LocalDateTime createAt
 ) {

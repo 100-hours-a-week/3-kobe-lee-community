@@ -4,6 +4,7 @@ import com.example.community.Post.api.dto.GetPostResponse;
 import com.example.community.Post.api.dto.PostPreview;
 import com.example.community.Post.domain.QPost;
 import com.example.community.Post.exception.PostNotFoundException;
+import com.example.community.image.domain.Image;
 import com.example.community.image.domain.QImage;
 import com.example.community.member.domain.QMember;
 import com.example.community.postImage.domain.QPostImage;
@@ -41,11 +42,13 @@ public class PostRepositoryCustomImpl implements PostRepositoryCustom {
                         post.commentCount,
                         post.viewCount,
                         post.writer.id,
-                        post.writer.profileImage.id,
+                        image.objectKey,
                         post.writer.nickname,
                         post.createdAt
                 ))
                 .from(post)
+                .join(post.writer, QMember.member)
+                .leftJoin(QMember.member.profileImage, image)
                 .where(cursorCondition)
                 .orderBy(orderSpecifier)
                 .limit(limit)
