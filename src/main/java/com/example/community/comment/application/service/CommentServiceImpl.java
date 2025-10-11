@@ -1,0 +1,42 @@
+package com.example.community.comment.application.service;
+
+import com.example.community.Post.domain.Post;
+import com.example.community.Post.exception.PostNotFoundException;
+import com.example.community.Post.repository.PostRepository;
+import com.example.community.auth.jwt.JwtUtils;
+import com.example.community.comment.api.dto.CreateCommentRequest;
+import com.example.community.comment.application.mapper.CreateCommentMapper;
+import com.example.community.comment.domain.Comment;
+import com.example.community.comment.repository.CommentRepository;
+import com.example.community.member.domain.Member;
+import com.example.community.member.exception.MemberNotFoundException;
+import com.example.community.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class CommentServiceImpl implements CommentService {
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+    private final JwtUtils jwtUtils;
+
+
+    @Override
+    @Transactional
+    public Comment createComment(HttpServletRequest httpServletRequest,
+                                 CreateCommentRequest createCommentRequest,
+                                 Long postId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Comment comment = CreateCommentMapper.toComment(createCommentRequest, member, post);
+        post.addComment(comment);
+
+        return commentRepository.save(comment);
+    }
+}
