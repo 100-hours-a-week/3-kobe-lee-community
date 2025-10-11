@@ -7,11 +7,15 @@ import com.example.community.auth.jwt.JwtUtils;
 import com.example.community.comment.api.dto.CreateCommentRequest;
 import com.example.community.comment.application.mapper.CreateCommentMapper;
 import com.example.community.comment.domain.Comment;
+import com.example.community.comment.exception.CommentNotFoundException;
 import com.example.community.comment.repository.CommentRepository;
+import com.example.community.global.exception.GeneralException;
+import com.example.community.global.response.code.status.ErrorStatus;
 import com.example.community.member.domain.Member;
 import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +42,23 @@ public class CommentServiceImpl implements CommentService {
         post.addComment(comment);
 
         return commentRepository.save(comment);
+    }
+
+    @Override
+    @Transactional
+    public LocalDateTime deleteComment(HttpServletRequest httpServletRequest, Long postId, Long commentId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        if (!comment.getWriter().getId().equals(memberId)) {
+            throw new GeneralException(ErrorStatus.NO_PERMISSION);
+        }
+
+        post.removeComment(comment);
+        commentRepository.delete(comment);
+
+        return LocalDateTime.now();
     }
 }

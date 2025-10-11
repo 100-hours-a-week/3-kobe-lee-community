@@ -30,6 +30,7 @@ public enum SuccessStatus implements BaseCode {
     GET_POST_LIST(HttpStatus.OK,"200_015", "게시글 목록을 조회하였습니다."),
     GET_POST(HttpStatus.OK,"200_016", "게시글을 조회하였습니다."),
     CREATE_COMMENT(HttpStatus.OK,"200_017", "댓글을 생성하였습니다."),
+    DELETE_COMMENT(HttpStatus.OK,"200_018", "댓글을 삭제하였습니다."),
     ;
 
 

@@ -55,7 +55,7 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member writer;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> commentList = new ArrayList<>();
 
     @Builder.Default
@@ -77,5 +77,12 @@ public class Post extends BaseEntity {
     public void addComment(Comment comment) {
         this.commentList.add(comment);
         this.commentCount++;
+    }
+
+    public void removeComment(Comment comment) {
+        this.commentList.remove(comment);
+        if (this.commentCount > 0) {
+            this.commentCount--;
+        }
     }
 }
