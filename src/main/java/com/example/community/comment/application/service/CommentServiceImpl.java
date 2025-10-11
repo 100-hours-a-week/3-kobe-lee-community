@@ -4,7 +4,9 @@ import com.example.community.Post.domain.Post;
 import com.example.community.Post.exception.PostNotFoundException;
 import com.example.community.Post.repository.PostRepository;
 import com.example.community.auth.jwt.JwtUtils;
+import com.example.community.comment.api.dto.CommentResponse;
 import com.example.community.comment.api.dto.CreateCommentRequest;
+import com.example.community.comment.api.dto.GetCommentListResponse;
 import com.example.community.comment.api.dto.UpdateCommentRequest;
 import com.example.community.comment.application.mapper.CreateCommentMapper;
 import com.example.community.comment.domain.Comment;
@@ -17,6 +19,7 @@ import com.example.community.member.exception.MemberNotFoundException;
 import com.example.community.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,4 +81,16 @@ public class CommentServiceImpl implements CommentService {
 
         return comment;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommentResponse> getCommentList(HttpServletRequest httpServletRequest, Long postId, String sort,
+                                                int limit, LocalDateTime cursorCreatedAt,
+                                                Long cursorId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+
+        return commentRepository.getCommentListWithCursor(memberId, postId, sort, limit, cursorCreatedAt, cursorId);
+    }
+
 }
