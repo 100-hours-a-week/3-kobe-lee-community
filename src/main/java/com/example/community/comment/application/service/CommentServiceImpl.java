@@ -5,6 +5,7 @@ import com.example.community.Post.exception.PostNotFoundException;
 import com.example.community.Post.repository.PostRepository;
 import com.example.community.auth.jwt.JwtUtils;
 import com.example.community.comment.api.dto.CreateCommentRequest;
+import com.example.community.comment.api.dto.UpdateCommentRequest;
 import com.example.community.comment.application.mapper.CreateCommentMapper;
 import com.example.community.comment.domain.Comment;
 import com.example.community.comment.exception.CommentNotFoundException;
@@ -60,5 +61,21 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
 
         return LocalDateTime.now();
+    }
+
+    @Override
+    @Transactional
+    public Comment updateComment(HttpServletRequest httpServletRequest, UpdateCommentRequest updateCommentRequest,
+                                 Long commentId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
+
+        if (!comment.getWriter().getId().equals(memberId)) {
+            throw new GeneralException(ErrorStatus.NO_PERMISSION);
+        }
+        comment.updateContent(updateCommentRequest.content());
+
+        return comment;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.community.comment.application.service;
 
 import com.example.community.comment.api.dto.CreateCommentRequest;
+import com.example.community.comment.api.dto.UpdateCommentRequest;
 import com.example.community.comment.domain.Comment;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -10,4 +11,7 @@ public interface CommentService {
                           Long postId);
 
     LocalDateTime deleteComment(HttpServletRequest httpServletRequest, Long postId, Long commentId);
+
+    Comment updateComment(HttpServletRequest httpServletRequest, UpdateCommentRequest updateCommentRequest,
+                          Long commentId);
 }
