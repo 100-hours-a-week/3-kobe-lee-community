@@ -39,6 +39,7 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자 정보가 존재하지 않습니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "이미지가 존재하지 않습니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404_004", "게시글이 존재하지 않습니다."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404_005", "댓글이 존재하지 않습니다."),
 
 
     // 409 CONFLICT
