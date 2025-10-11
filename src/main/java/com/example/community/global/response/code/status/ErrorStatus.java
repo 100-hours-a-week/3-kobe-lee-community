@@ -31,10 +31,14 @@ public enum ErrorStatus implements BaseErrorCode {
     BLACKLISTED_TOKEN(HttpStatus.UNAUTHORIZED, "401_006", "블랙리스트에 등록된 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "401_007", "유효하지 않은 리프레시 토큰입니다."),
 
+    // 403 FORBIDDEN
+    NO_PERMISSION(HttpStatus.FORBIDDEN, "403_001", "해당 작업을 수행할 권한이 없습니다."),
+
     // 404 NOT FOUND
     DEFAULT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_001", "기본 이미지가 존재하지 않습니다."),
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404_002", "사용자 정보가 존재하지 않습니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "404_003", "이미지가 존재하지 않습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404_004", "게시글이 존재하지 않습니다."),
 
 
     // 409 CONFLICT

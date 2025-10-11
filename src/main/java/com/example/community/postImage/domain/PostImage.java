@@ -12,11 +12,13 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostImage {
@@ -38,4 +40,16 @@ public class PostImage {
 
     @Column(nullable = false)
     private boolean isThumbnail;
+
+    public static PostImage of(Post post, Image image, int order, boolean isThumbnail) {
+        PostImage postImage = new PostImage();
+        postImage.post = post;
+        postImage.image = image;
+        postImage.displayOrder = order;
+        postImage.isThumbnail = isThumbnail;
+
+        postImage.id = new PostImageId(post.getId(), image.getId());
+
+        return postImage;
+    }
 }

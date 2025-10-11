@@ -24,7 +24,11 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_INFO_UPDATE(HttpStatus.OK,"200_009", "사용자 정보 수정에 성공했습니다."),
     PASSWORD_UPDATE(HttpStatus.OK,"200_010", "비밀번호 수정에 성공했습니다."),
     DELETE_MEMBER(HttpStatus.OK,"200_011", "탈퇴 처리되었습니다."),
-
+    CREATE_POST(HttpStatus.OK,"200_012", "게시글이 생성되었습니다."),
+    DELETE_POST(HttpStatus.OK,"200_013", "게시글이 삭제되었습니다."),
+    UPDATE_POST(HttpStatus.OK,"200_014", "게시글이 수정되었습니다."),
+    GET_POST_LIST(HttpStatus.OK,"200_015", "게시글 목록을 조회하였습니다."),
+    GET_POST(HttpStatus.OK,"200_016", "게시글을 조회하였습니다.")
     ;
 
 
