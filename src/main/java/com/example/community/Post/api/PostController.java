@@ -2,6 +2,7 @@ package com.example.community.Post.api;
 
 import com.example.community.Post.api.dto.CreatePostRequest;
 import com.example.community.Post.api.dto.CreatePostResponse;
+import com.example.community.Post.api.dto.GetPostResponse;
 import com.example.community.Post.api.dto.PostPreview;
 import com.example.community.Post.api.dto.UpdatePostRequest;
 import com.example.community.Post.api.dto.UpdatePostResponse;
@@ -65,6 +66,13 @@ public class PostController {
         return ApiResponse.onSuccess(SuccessStatus.GET_POST_LIST, posts);
     }
 
+    @GetMapping("/{postId}")
+    public ApiResponse<GetPostResponse> getPost(HttpServletRequest httpServletRequest,
+                                                @PathVariable Long postId) {
+        return ApiResponse.onSuccess(SuccessStatus.GET_POST, postService.getPost(httpServletRequest, postId));
+    }
+
+
     private Object parseCursor(String sort, String cursor) {
         if (cursor == null) return null;
 
@@ -74,4 +82,6 @@ public class PostController {
             default -> throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + sort);
         };
     }
+
+
 }

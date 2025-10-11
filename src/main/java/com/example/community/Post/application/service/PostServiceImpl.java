@@ -1,6 +1,7 @@
 package com.example.community.Post.application.service;
 
 import com.example.community.Post.api.dto.CreatePostRequest;
+import com.example.community.Post.api.dto.GetPostResponse;
 import com.example.community.Post.api.dto.UpdatePostRequest;
 import com.example.community.Post.domain.Post;
 import com.example.community.Post.exception.PostNotFoundException;
@@ -106,5 +107,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostPreview> getPostList(String sort, int limit, Object cursor) {
         return postRepository.findPostsWithCursor(sort, limit, cursor);
+    }
+
+    @Override
+    public GetPostResponse getPost(HttpServletRequest httpServletRequest, Long postId) {
+        String accessToken = jwtUtils.resolveToken(httpServletRequest);
+        Long memberId = Long.parseLong(jwtUtils.getUserNameFromToken(accessToken));
+
+        return postRepository.findPostDetail(postId, memberId);
     }
 }
